@@ -1,20 +1,11 @@
 import express from 'express';
+import messagesRouter from "./routers/messages";
 
 const app = express();
 const port = 8000;
 
-
-app.get('/products', (req, res) => {
-    res.send('List of products will be here');
-});
-
-app.get('/products/:id', (req, res) => {
-    res.send('A single product by id will be here');
-});
-
-app.post('/products', (req, res) => {
-    res.send('Will create new product here');
-});
+app.use(express.json());
+app.use('/messages', messagesRouter)
 
 app.listen(port, () => {
     console.log(`Server started on ${port} port!`);
