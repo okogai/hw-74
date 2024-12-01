@@ -1,13 +1,11 @@
 import express from "express";
+import fileDb from "../fileDb";
 
 const messagesRouter = express.Router();
 
-messagesRouter.get('/', (req, res) => {
-    res.send('Messages will be here');
-});
-
-messagesRouter.get('/:id', (req, res) => {
-    res.send('A single message by id will be here');
+messagesRouter.get('/', async (req, res) => {
+    const messages = await fileDb.getItems();
+    res.send(messages);
 });
 
 messagesRouter.post('/', (req, res) => {
