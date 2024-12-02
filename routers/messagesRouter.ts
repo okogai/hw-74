@@ -8,9 +8,13 @@ messagesRouter.get('/', async (req, res) => {
     res.send(messages);
 });
 
-messagesRouter.post('/', (req, res) => {
-    res.send('Will create new message here');
-    console.log(req.body);
+messagesRouter.post('/', async (req, res) => {
+    const post = {
+        message: req.body.message,
+        datetime: new Date().toISOString().replace(/:/g, '-'),
+    };
+    await fileDb.addItem(post);
+    res.send(post);
 });
 
 export default messagesRouter;

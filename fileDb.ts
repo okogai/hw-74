@@ -1,20 +1,20 @@
 import {promises as fs} from 'fs';
 import {Message} from "./types";
 
-const data: Message[] = [];
+let data: Message[] = [];
 
 const fileDb = {
-    async init() {
+    init: async function () {
         try {
             const filesDb = await fs.readdir('./messagesDb');
-            filesDb.sort((a, b) => a.localeCompare(b));
-            const lastFiveMessages = filesDb.slice(-5);
+            const responseMessages = filesDb.slice(-5);
 
             await Promise.all(
-                lastFiveMessages.map(async (file) => {
+                responseMessages.map(async (file) => {
                     const fileContents = await fs.readFile(`./messagesDb/${file}`);
                     const result = JSON.parse(fileContents.toString()) as Message;
-                    data.push(result);
+                    const datetime = file.replace('.txt', '');
+                    data.push({...result, datetime});
                 })
             );
         } catch (e) {
@@ -22,8 +22,21 @@ const fileDb = {
         }
     },
     async getItems() {
+        data = [];
+        await this.init();
         return data;
     },
+    async addItem(message: Message) {
+        try {
+            const fileContent = { message: message.message };
+
+            const fileName = `./messagesDb/${message.datetime}.txt`;
+
+            await fs.writeFile(fileName, JSON.stringify(fileContent));
+        } catch (e) {
+            console.error('Error adding new record', e);
+        }
+    }
 };
 
 export default fileDb;
